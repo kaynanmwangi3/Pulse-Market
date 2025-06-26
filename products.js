@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Fetch Products
       async function fetchProducts() {
         try {
-          const response = await fetch('db.json');
+          const response = await fetch('./db.json');
           products = await response.json();
           renderProducts(products);
         } catch (error) {
