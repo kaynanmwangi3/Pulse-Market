@@ -22,7 +22,8 @@
 //             headers: {
 //                 "X-Master-Key": API_KEY,
 //                 "Content-Type": "application/json"
-//             }
+//             },
+                  mode: "cors"
 //         });
 
 //         if (!response.ok) {
