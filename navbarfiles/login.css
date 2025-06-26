@@ -1,4 +1,7 @@
-/* Base Styles - Customize these to match your UI */
+body {
+    background-color: #C19A6B;
+}
+
 .auth-container {
   max-width: 400px;
   margin: 0 auto;
