@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
       title: "Collaboration Project",
       category: "collab",
       imageUrl:
-        "https://images.unsplash.com/photo-1499781350541-7783f6c6a0c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1415&q=80",
+        "https://t3.ftcdn.net/jpg/02/73/22/74/360_F_273227473_N0WRQuX3uZCJJxlHKYZF44uaJAkh2xLG.jpg",
     },
     {
       id: 3,
