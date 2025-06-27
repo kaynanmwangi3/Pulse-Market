@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configuration
     const BIN_ID = "685e7cdf8561e97a502cb95c";
     const API_KEY = "$2a$10$0n6H.xwsnv1QcrLc00Zui0nIAyv5AU.eCCSvzPG/YLRvkBkS4ByVe";
-    const IMAGE_BASE_PATH = "images/";
+    const IMAGE_BASE_PATH = "/Pulse-Market/images/"; // Adjust this path based on your GitHub Pages URL
     const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23f5f5f5'/%3E%3Ctext x='150' y='100' font-family='Arial' font-size='16' text-anchor='middle' fill='%23000'%3EImage not available%3C/text%3E%3C/svg%3E";
 
     // State
@@ -101,11 +101,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const div = document.createElement('div');
             div.className = 'product-item';
             
+            // Ensure the image path is correctly constructed
+            const fullImagePath = product.image ? `${IMAGE_BASE_PATH}${product.image}` : PLACEHOLDER_IMG;
+
             div.innerHTML = template.innerHTML
                 .replace(/\${id}/g, product.id)
                 .replace(/\${name}/g, product.name)
                 .replace(/\${price}/g, product.price?.toFixed(2) || '0.00')
-                .replace(/\${image}/g, product.image)
+                .replace(/\${image}/g, fullImagePath)
                 .replace(/\${description}/g, product.description || '')
                 .replace(/\${originalPrice}/g, product.originalPrice?.toFixed(2) || '0.00');
 
