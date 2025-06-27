@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let products = [];
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Cart Functions (DEFINED FIRST)
+    // Cart Functions
     const addToCart = (e) => {
         const productId = parseInt(e.target.dataset.id);
         const product = products.find(p => p.id === productId);
@@ -106,7 +106,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 .replace(/\${name}/g, product.name)
                 .replace(/\${price}/g, product.price?.toFixed(2) || '0.00')
                 .replace(/\${image}/g, product.image)
-                .replace(/\${description}/g, product.description || '');
+                .replace(/\${description}/g, product.description || '')
+                .replace(/\${originalPrice}/g, product.originalPrice?.toFixed(2) || '0.00');
 
             const img = div.querySelector('img');
             if (img) {
