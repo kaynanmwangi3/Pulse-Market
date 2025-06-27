@@ -13,13 +13,14 @@ document.addEventListener('DOMContentLoaded', function() {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     
     // API Configuration
-    const BIN_ID = "685e7cdf8561e97a502cb95c"; // Your new Bin ID
-    const API_KEY = "$2a$10$0n6H.xwsnv1QcrLc00Zui0nIAyv5AU.eCCSvzPG/YLRvkBkS4ByVe"; // Your key
-    
+    const BIN_ID = "685e7cdf8561e97a502cb95c"; // Your working Bin ID
+    const API_KEY = "$2a$10$0n6H.xwsnv1QcrLc00Zui0nIAyv5AU.eCCSvzPG/YLRvkBkS4ByVe";
+    const PLACEHOLDER_IMG = "https://via.placeholder.com/300?text=Product";
+
     // Fetch Products
     async function fetchProducts() {
         try {
-            console.log("Fetching products from JSONBin...");
+            console.log("[DEBUG] Fetching products...");
             const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
                 headers: {
                     "X-Master-Key": API_KEY,
@@ -27,90 +28,95 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            console.log("API Response Status:", response.status);
-            
             if (!response.ok) {
-                const errorData = await response.json();
-                console.error("API Error:", errorData);
-                throw new Error(`Failed to fetch products (HTTP ${response.status})`);
+                throw new Error(`API request failed with status ${response.status}`);
             }
 
             const data = await response.json();
-            console.log("API Data Received:", data);
-            
+            console.log("[DEBUG] API Response:", data);
+
             if (!data.record?.products) {
-                throw new Error("Products array is missing in the response");
+                throw new Error("No products array found in response");
             }
 
-            products = data.record.products;
-            console.log("Products Loaded:", products);
+            products = data.record.products.map(p => ({
+                ...p,
+                // Ensure image URLs are properly formatted
+                image: p.image ? `images/${p.image}` : PLACEHOLDER_IMG
+            }));
+
+            console.log("[DEBUG] Processed Products:", products);
             renderProducts(products);
-            updateCart();
         } catch (error) {
-            console.error("Fetch Error:", error);
-            productGrid.innerHTML = `
-                <div class="error-message">
-                    ❌ Failed to load products. Please try again later.
-                    <p>${error.message}</p>
-                    <button onclick="window.location.reload()">Retry</button>
-                </div>
-            `;
-            
-            // Fallback to test data
-            products = [{
-                id: 1,
-                name: "Test Product (Fallback)",
-                price: 99.99,
-                image: "placeholder.jpg",
-                description: "Sample product loaded locally"
-            }];
-            renderProducts(products);
+            console.error("[ERROR] Fetch failed:", error);
+            loadFallbackProducts();
         }
+    }
+
+    // Fallback data
+    function loadFallbackProducts() {
+        console.warn("[WARN] Using fallback product data");
+        products = [{
+            id: 1,
+            name: "Sample Product",
+            price: 99.99,
+            image: PLACEHOLDER_IMG,
+            description: "Example product description"
+        }];
+        renderProducts(products);
     }
 
     // Render Products
     function renderProducts(productsToRender) {
-        console.log("Rendering products:", productsToRender);
+        console.log("[DEBUG] Rendering products...");
         productGrid.innerHTML = '';
-        
+
         if (!productsToRender?.length) {
             productGrid.innerHTML = `
                 <div class="empty-message">
-                    No products found. Try a different search.
-                </div>
-            `;
+                    No products available.
+                </div>`;
             return;
         }
 
-        const template = document.getElementById('productTemplate')?.innerHTML;
+        const template = document.getElementById('productTemplate');
         if (!template) {
-            console.error("Product template not found!");
+            console.error("[ERROR] Product template not found!");
             return;
         }
 
         productsToRender.forEach(product => {
             try {
-                const html = template
+                const html = template.innerHTML
                     .replace(/\${id}/g, product.id)
                     .replace(/\${name}/g, product.name)
                     .replace(/\${price}/g, product.price?.toFixed(2) || '0.00')
                     .replace(/\${originalPrice}/g, product.originalPrice?.toFixed(2) || '')
-                    .replace(/\${image}/g, `images/${product.image}` || 'placeholder.jpg')
-                    .replace(/\${description}/g, product.description || '');
+                    .replace(/\${description}/g, product.description || '')
+                    .replace(/\${image}/g, product.image || PLACEHOLDER_IMG);
 
                 const div = document.createElement('div');
                 div.className = 'product-item';
                 div.innerHTML = html;
                 
+                // Add error handling for images
+                const img = div.querySelector('img');
+                if (img) {
+                    img.onerror = function() {
+                        this.src = PLACEHOLDER_IMG;
+                        this.alt = "Image not available";
+                    };
+                }
+
                 div.querySelector('.add-to-cart')?.addEventListener('click', addToCart);
                 productGrid.appendChild(div);
             } catch (error) {
-                console.error("Error rendering product:", product, error);
+                console.error("[ERROR] Rendering product failed:", error);
             }
         });
     }
 
-    // Cart Functions (unchanged from your original)
+    // Cart Functions
     function addToCart(e) {
         const productId = parseInt(e.target.dataset.id);
         const product = products.find(p => p.id === productId);
@@ -139,16 +145,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const template = document.getElementById('cartItemTemplate')?.innerHTML;
+        const template = document.getElementById('cartItemTemplate');
         if (!template) return;
 
         cart.forEach(item => {
-            const html = template
+            const html = template.innerHTML
                 .replace(/\${id}/g, item.id)
                 .replace(/\${name}/g, item.name)
                 .replace(/\${price}/g, item.price.toFixed(2))
                 .replace(/\${quantity}/g, item.quantity)
-                .replace(/\${image}/g, `images/${item.image}`)
+                .replace(/\${image}/g, item.image || PLACEHOLDER_IMG)
                 .replace(/\${total}/g, (item.price * item.quantity).toFixed(2));
 
             const div = document.createElement('div');
@@ -173,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const term = e.target.value.toLowerCase();
         renderProducts(products.filter(p => 
             p.name.toLowerCase().includes(term) || 
-            p.description?.toLowerCase().includes(term)
+            (p.description && p.description.toLowerCase().includes(term))
         ));
     });
 
