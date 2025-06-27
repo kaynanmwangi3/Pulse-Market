@@ -11,14 +11,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configuration
     const BIN_ID = "685e7cdf8561e97a502cb95c";
     const API_KEY = "$2a$10$0n6H.xwsnv1QcrLc00Zui0nIAyv5AU.eCCSvzPG/YLRvkBkS4ByVe";
-    const IMAGE_BASE_PATH = "images/"; // Relative to your HTML file
-    const PLACEHOLDER_IMG = "https://via.placeholder.com/300?text=Product";
+    const PLACEHOLDER_IMG = "placeholder.jpg"; // Local fallback image
 
     // State
     let products = [];
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Main Functions
+    // Fetch Products
     async function fetchProducts() {
         try {
             const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -32,13 +31,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const data = await response.json();
             products = data.record.products || [];
-            
-            // Process products without pre-checking images
-            products = products.map(product => ({
-                ...product,
-                image: product.image ? `${IMAGE_BASE_PATH}${product.image}` : PLACEHOLDER_IMG
-            }));
-
             renderProducts(products);
         } catch (error) {
             console.error("Fetch failed:", error);
@@ -71,26 +63,32 @@ document.addEventListener('DOMContentLoaded', function() {
         productsToRender.forEach(product => {
             const div = document.createElement('div');
             div.className = 'product-item';
+            
+            // Create image path - assumes images are in same directory as HTML
+            const imgPath = product.image || PLACEHOLDER_IMG;
+            
             div.innerHTML = template.innerHTML
                 .replace(/\${id}/g, product.id)
                 .replace(/\${name}/g, product.name)
                 .replace(/\${price}/g, product.price?.toFixed(2))
-                .replace(/\${image}/g, product.image)
+                .replace(/\${image}/g, imgPath)
                 .replace(/\${description}/g, product.description || '');
             
-            // Single image error handler
+            // Add error handling for images
             const img = div.querySelector('img');
-            if (img) img.onerror = () => {
-                img.src = PLACEHOLDER_IMG;
-                img.alt = "Image not available";
-            };
+            if (img) {
+                img.onerror = function() {
+                    this.src = PLACEHOLDER_IMG;
+                    this.alt = "Image not available";
+                };
+            }
             
             div.querySelector('.add-to-cart')?.addEventListener('click', addToCart);
             productGrid.appendChild(div);
         });
     }
 
-    // Cart Functions (unchanged)
+    // Cart Functions
     function addToCart(e) {
         const productId = parseInt(e.target.dataset.id);
         const product = products.find(p => p.id === productId);
@@ -129,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .replace(/\${name}/g, item.name)
                 .replace(/\${price}/g, item.price.toFixed(2))
                 .replace(/\${quantity}/g, item.quantity)
-                .replace(/\${image}/g, item.image)
+                .replace(/\${image}/g, item.image || PLACEHOLDER_IMG)
                 .replace(/\${total}/g, (item.price * item.quantity).toFixed(2));
             cartItems.appendChild(div);
         });
