@@ -40,4 +40,5 @@ document.getElementById('signupForm').addEventListener('submit', function(e) {
   
   // Add your signup logic here
   console.log('Signup submitted', { name, email, password });
-});
+});  
+

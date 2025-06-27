@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PulseMarket Products</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./products.css">
+</head>
+<body class=" min-h-screen flex flex-col items-center p-4">
+  <header class="w-full max-w-4xl mb-8">
+    <h1 class="text-3xl font-bold text-center text-gray-800">PulseMarket Products</h1>
+    <div class="mt-4 flex gap-4">
+      <input type="text" id="search" placeholder="Search by name..." class="p-2 border rounded w-full max-w-xs">
+      <select id="category-filter" class="p-2 border rounded">
+        <option value="">All Categories</option>
+      </select>
+      <select id="price-filter" class="p-2 border rounded">
+        <option value="">All Prices</option>
+        <option value="0-50">Under $50</option>
+        <option value="50-100">$50 - $100</option>
+        <option value="100+">Over $100</option>
+      </select>
+    </div>
+  </header>
+  <main class="w-full max-w-4xl relative">
+    <div id="products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Products will be dynamically inserted here -->
+    </div>
+    <div id="error" class="error-message"></div>
+    <button id="toggle-cart" class="fixed bottom-4 right-4 p-2 bg-blue-600 text-white rounded-full shadow-lg">Cart</button>
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-80 bg-white h-full shadow-lg p-4 z-50 hidden">
+      <h2 class="text-xl font-bold mb-4">Shopping Cart</h2>
+      <div id="cart-items" class="h-3/4 overflow-y-auto"></div>
+      <div id="cart-total" class="mt-4 text-lg font-semibold">Total: $0.00</div>
+      <button id="order-cart" class="order-btn mt-4 w-full">Order Now</button>
+    </div>
+  </main>
+  <script src="./products.js"></script>
+</body>
+</html>
