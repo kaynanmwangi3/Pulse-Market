@@ -18,43 +18,75 @@ document.addEventListener('DOMContentLoaded', function() {
     let products = [];
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Fetch Products with Filename Sanitization
-    async function fetchProducts() {
-        try {
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                headers: {
-                    "X-Master-Key": API_KEY,
-                    "Content-Type": "application/json"
-                }
-            });
+    // Cart Functions (DEFINED FIRST)
+    const addToCart = (e) => {
+        const productId = parseInt(e.target.dataset.id);
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
 
-            const data = await response.json();
-            products = data.record?.products || [];
-            
-            // Fix image paths and handle Zone.Identifier files
-            products = products.map(product => {
-                let imageFile = product.image || '';
-                
-                // Remove any Zone.Identifier suffix if present
-                imageFile = imageFile.replace(/\[\]Zone\.Identifier$/, '');
-                
-                // Fix filename inconsistencies (e.g., kitchencutery.jpg vs kitchencutlery.jpg)
-                if (imageFile === "kitchencutlery.jpg") imageFile = "kitchencutery.jpg";
-                
-                return {
-                    ...product,
-                    image: imageFile ? `${IMAGE_BASE_PATH}${imageFile}` : PLACEHOLDER_IMG
-                };
-            });
-
-            renderProducts();
-        } catch (error) {
-            console.error("Fetch error:", error);
-            loadFallbackProducts();
+        const existingItem = cart.find(item => item.id === productId);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push({ ...product, quantity: 1 });
         }
-    }
+        updateCart();
+    };
 
-    function renderProducts() {
+    const updateCart = () => {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartTotal.textContent = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+        renderCartItems();
+    };
+
+    const renderCartItems = () => {
+        cartItems.innerHTML = '';
+        if (!cart.length) {
+            cartItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+            return;
+        }
+
+        const template = document.getElementById('cartItemTemplate');
+        if (!template) return;
+
+        cart.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'cart-item';
+            div.dataset.id = item.id;
+            div.innerHTML = template.innerHTML
+                .replace(/\${id}/g, item.id)
+                .replace(/\${name}/g, item.name)
+                .replace(/\${price}/g, item.price.toFixed(2))
+                .replace(/\${quantity}/g, item.quantity)
+                .replace(/\${image}/g, item.image || PLACEHOLDER_IMG)
+                .replace(/\${total}/g, (item.price * item.quantity).toFixed(2));
+            cartItems.appendChild(div);
+        });
+
+        document.querySelectorAll('.remove-item').forEach(btn => {
+            btn.addEventListener('click', removeFromCart);
+        });
+    };
+
+    const removeFromCart = (e) => {
+        cart = cart.filter(item => item.id !== parseInt(e.target.closest('.cart-item').dataset.id));
+        updateCart();
+    };
+
+    // Product Functions
+    const loadFallbackProducts = () => {
+        products = [{
+            id: 1,
+            name: "Sample Product",
+            price: 99.99,
+            image: PLACEHOLDER_IMG,
+            description: "Example description"
+        }];
+        renderProducts();
+    };
+
+    const renderProducts = () => {
         productGrid.innerHTML = '';
         
         if (!products.length) {
@@ -76,24 +108,65 @@ document.addEventListener('DOMContentLoaded', function() {
                 .replace(/\${image}/g, product.image)
                 .replace(/\${description}/g, product.description || '');
 
-            // Robust image handling
             const img = div.querySelector('img');
             if (img) {
-                img.loading = "lazy";
                 img.onerror = () => {
                     img.src = PLACEHOLDER_IMG;
                     img.alt = "Image not available";
-                    console.warn(`Failed to load: ${product.image}`);
                 };
             }
             
             div.querySelector('.add-to-cart')?.addEventListener('click', addToCart);
             productGrid.appendChild(div);
         });
-    }
+    };
 
-    // [Rest of your cart functions remain unchanged]
-    // ... (keep all existing cart functions)
+    // Main Fetch Function
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                headers: {
+                    "X-Master-Key": API_KEY,
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
+            const data = await response.json();
+            products = data.record?.products || [];
+            
+            // Process image paths
+            products = products.map(product => ({
+                ...product,
+                image: product.image ? `${IMAGE_BASE_PATH}${product.image}` : PLACEHOLDER_IMG
+            }));
+
+            renderProducts();
+        } catch (error) {
+            console.error("Fetch error:", error);
+            loadFallbackProducts();
+        }
+    };
+
+    // Event Listeners
+    productSearch.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        renderProducts(products.filter(p => 
+            p.name.toLowerCase().includes(term) || 
+            (p.description && p.description.toLowerCase().includes(term))
+        ));
+    });
+
+    cartToggle.addEventListener('click', () => {
+        document.body.classList.toggle('cart-open');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!cartSidebar.contains(e.target) && e.target !== cartToggle) {
+            document.body.classList.remove('cart-open');
+        }
+    });
 
     // Initialize
     fetchProducts();
