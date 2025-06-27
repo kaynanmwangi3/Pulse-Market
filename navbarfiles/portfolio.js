@@ -9,13 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
       imageUrl:
         "https://images.unsplash.com/photo-1579547945413-497e1b99dac0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
     },
-    {
-      id: 2,
-      title: "Collaboration Project",
-      category: "collab",
-      imageUrl:
-        "https://t3.ftcdn.net/jpg/02/73/22/74/360_F_273227473_N0WRQuX3uZCJJxlHKYZF44uaJAkh2xLG.jpg",
-    },
+   
     {
       id: 3,
       title: "Personal Exploration",
