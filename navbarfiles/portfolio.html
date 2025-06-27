@@ -3,138 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Art Portfolio</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="./portfolio.css">
+    <title>PulseMarket - Our Journey</title>
+    <link rel="stylesheet" href="portfolio.css">
 </head>
 <body>
-    <!-- ===== HERO SECTION ===== -->
+    <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-content container">
-            <h1>Art & Collaborations</h1>
-            <p>Showcasing my creative journey through digital art and meaningful collaborations</p>
-            <a href="#gallery" class="btn">View Gallery</a>
+        <div class="container hero-content">
+            <h1>Welcome to PulseMarket</h1>
+            <p>From a spark of innovation to a thriving global marketplace, discover our journey of connecting businesses and empowering growth.</p>
+            <a href="#about" class="btn">Explore Our Story</a>
         </div>
     </section>
 
-    <!-- ===== GALLERY SECTION ===== -->
-    <section id="gallery" class="gallery">
+    <!-- Gallery Section -->
+    <section class="gallery" id="gallery">
         <div class="container">
-            <div class="section-title">
-                <h2>Featured Work</h2>
-            </div>
-            
+            <h2 class="section-title">Our Milestones</h2>
             <div class="filter-buttons">
                 <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="digital">Digital</button>
-                <button class="filter-btn" data-filter="collab">Collaborations</button>
-                <button class="filter-btn" data-filter="personal">Personal</button>
+                <button class="filter-btn" data-filter="founding">Founding</button>
+                <button class="filter-btn" data-filter="growth">Growth</button>
+                <button class="filter-btn" data-filter="impact">Impact</button>
             </div>
-            
-            <div class="gallery-grid">
-                <!-- Art items will be added dynamically with JavaScript -->
+            <div class="gallery-grid"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container about-content">
+            <div class="about-text">
+                <h2>Our Journey</h2>
+                <p>PulseMarket began in 2018 as a small startup with a bold vision: to create a seamless platform connecting small businesses with global markets. Founded by a group of passionate entrepreneurs, we faced early challenges but persevered through innovation and grit.</p>
+                <p>Today, PulseMarket empowers over 10,000 businesses across 50 countries, fostering growth through cutting-edge technology and a commitment to community. Our story is one of resilience, collaboration, and relentless pursuit of excellence.</p>
+                <div class="skills">
+                    <span class="skill-tag">Innovation</span>
+                    <span class="skill-tag">Global Reach</span>
+                    <span class="skill-tag">Community</span>
+                    <span class="skill-tag">Technology</span>
+                </div>
+            </div>
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="PulseMarket Team">
             </div>
         </div>
     </section>
 
-    <!-- ===== ABOUT SECTION ===== -->
-    <section class="about">
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
         <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>About the Artist</h2>
-                    <p>I'm a passionate digital artist specializing in creating vibrant, emotion-driven pieces. With over 5 years of experience, I've collaborated with brands, musicians, and fellow artists to bring unique visions to life.</p>
-                    <p>My work blends traditional techniques with modern digital tools, resulting in pieces that feel both timeless and contemporary.</p>
-                    
-                    <div class="skills">
-                        <span class="skill-tag">Procreate</span>
-                        <span class="skill-tag">Photoshop</span>
-                        <span class="skill-tag">Illustrator</span>
-                        <span class="skill-tag">Digital Painting</span>
-                        <span class="skill-tag">Concept Art</span>
-                    </div>
-                </div>
-                
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1544717305-2782549b5136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Artist at work">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== TESTIMONIALS SECTION ===== -->
-    <section class="testimonials">
-        <div class="container">
-            <div class="section-title">
-                <h2>Collaborator Testimonials</h2>
-            </div>
-            
+            <h2 class="section-title">What Our Partners Say</h2>
             <div class="testimonial-slider">
                 <div class="testimonial-slide active">
-                    <p class="testimonial-text">Working with this artist was an absolute pleasure. They brought our vision to life in ways we couldn't have imagined.</p>
-                    <p class="testimonial-author">— Sarah J., Creative Director</p>
-                </div>
-                
+                    <p class="testimonial-text">PulseMarket transformed our small business by connecting us with international buyers. Their platform is intuitive and their support unmatched.</p>
+                    <p class="testimonial-author">– Sarah L., Small Business Owner</p>
+               chan
                 <div class="testimonial-slide">
-                    <p class="testimonial-text">Their attention to detail and unique style elevated our project beyond expectations. Will definitely collaborate again!</p>
-                    <p class="testimonial-author">— Michael T., Music Producer</p>
+                    <p class="testimonial-text">The analytics tools provided by PulseMarket helped us optimize our supply chain, doubling our efficiency in just six months.</p>
+                    <p class="testimonial-author">– James K., Logistics Manager</p>
                 </div>
-                
                 <div class="testimonial-slide">
-                    <p class="testimonial-text">A true professional who delivers on time and exceeds expectations with every piece.</p>
-                    <p class="testimonial-author">— Elena R., Gallery Owner</p>
+                    <p class="testimonial-text">Joining PulseMarket was a game-changer. Their global network opened doors we never thought possible.</p>
+                    <p class="testimonial-author">– Maria T., Entrepreneur</p>
                 </div>
-                
-                <div class="slider-nav">
-                    <div class="slider-dot active" data-slide="0"></div>
-                    <div class="slider-dot" data-slide="1"></div>
-                    <div class="slider-dot" data-slide="2"></div>
-                </div>
+            </div>
+            <div class="slider-nav">
+                <span class="slider-dot active" data-slide="0"></span>
+                <span class="slider-dot" data-slide="1"></span>
+                <span class="slider-dot" data-slide="2"></span>
             </div>
         </div>
     </section>
 
-    <!-- ===== CONTACT SECTION ===== -->
-    <section class="contact">
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
         <div class="container">
-            <div class="section-title">
-                <h2>Get In Touch</h2>
-            </div>
-            
+            <h2 class="section-title">Get in Touch</h2>
+            <p>Join the PulseMarket community today. Let's grow together!</p>
             <div class="social-links">
-                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="#" aria-label="Behance"><i class="fab fa-behance"></i></a>
-                <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="#" aria-label="Dribbble"><i class="fab fa-dribbble"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
             </div>
-            
             <form class="contact-form">
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" id="name" name="name" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="message">Message</label>
                     <textarea id="message" name="message" rows="5" required></textarea>
                 </div>
-                
                 <button type="submit" class="btn">Send Message</button>
             </form>
         </div>
     </section>
 
-    <!-- ===== FOOTER ===== -->
+    <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2023 Art Portfolio. All rights reserved.</p>
+            <p>&copy; 2025 PulseMarket. All rights reserved.</p>
         </div>
     </footer>
-    <script src="./portfolio.js"></script>
+
+    <script src="portfolio.js"></script>
 </body>
 </html>

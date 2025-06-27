@@ -67,18 +67,18 @@ h3 {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .hero h1 {
   font-size: 3.5rem;
   margin-bottom: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 .hero p {
@@ -104,8 +104,8 @@ h3 {
 .btn:hover {
   background-color: var(--camel-light);
   color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 /* ===== GALLERY SECTION ===== */
@@ -117,6 +117,7 @@ h3 {
   text-align: center;
   margin-bottom: 50px;
   position: relative;
+  animation: slideIn 1s ease-out;
 }
 
 .section-title::after {
@@ -126,6 +127,11 @@ h3 {
   height: 4px;
   background-color: var(--camel);
   margin: 15px auto 0;
+  transition: width 0.5s ease;
+}
+
+.section-title:hover::after {
+  width: 120px;
 }
 
 .filter-buttons {
@@ -151,6 +157,7 @@ h3 {
 .filter-btn:hover {
   background-color: var(--camel);
   color: white;
+  transform: scale(1.1);
 }
 
 .gallery-grid {
@@ -168,7 +175,7 @@ h3 {
 }
 
 .art-item:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) rotate(1deg);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
 }
 
@@ -180,7 +187,7 @@ h3 {
 }
 
 .art-item:hover img {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 .art-info {
@@ -252,13 +259,18 @@ h3 {
 
 .skill-tag:hover {
   background-color: var(--grey-dark);
-  transform: translateY(-3px);
+  transform: translateY(-5px) rotate(3deg);
 }
 
 .about-image img {
   width: 100%;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.about-image img:hover {
+  transform: scale(1.05);
 }
 
 /* ===== TESTIMONIALS SECTION ===== */
@@ -322,7 +334,7 @@ h3 {
 
 .slider-dot.active {
   background-color: var(--camel);
-  transform: scale(1.2);
+  transform: scale(1.3);
 }
 
 /* ===== CONTACT SECTION ===== */
@@ -355,7 +367,7 @@ h3 {
 .social-links a:hover {
   background-color: var(--camel);
   color: white;
-  transform: translateY(-5px);
+  transform: translateY(-5px) rotate(10deg);
 }
 
 .contact-form {
@@ -365,6 +377,11 @@ h3 {
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+}
+
+.contact-form:hover {
+  transform: translateY(-5px);
 }
 
 .form-group {
@@ -417,7 +434,7 @@ footer {
 }
 
 .animate {
-  animation: slideIn 1s ease-out forwards;
+  animation: slideIn 1.2s ease-out forwards;
 }
 
 /* ===== RESPONSIVE DESIGN ===== */
