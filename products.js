@@ -1,177 +1,137 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // DOM Elements
-    const productGrid = document.getElementById('productGrid');
-    const productSearch = document.getElementById('productSearch');
-    const cartToggle = document.getElementById('cartToggle');
-    const cartSidebar = document.getElementById('cartSidebar');
-    const cartItems = document.getElementById('cartItems');
-    const cartCount = document.getElementById('cartCount');
-    const cartTotal = document.getElementById('cartTotal');
-    
-    // Configuration
-    const BIN_ID = "685e7cdf8561e97a502cb95c";
-    const API_KEY = "$2a$10$0n6H.xwsnv1QcrLc00Zui0nIAyv5AU.eCCSvzPG/YLRvkBkS4ByVe";
-    const IMAGE_BASE_PATH = "/Pulse-Market/images/"; // Adjust this path based on your GitHub Pages URL
-    const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23f5f5f5'/%3E%3Ctext x='150' y='100' font-family='Arial' font-size='16' text-anchor='middle' fill='%23000'%3EImage not available%3C/text%3E%3C/svg%3E";
-
-    // State
-    let products = [];
+let products = [];
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    // Cart Functions
-    const addToCart = (e) => {
+    // Fetch products from db.json
+    async function loadProducts() {
+      try {
+        const response = await fetch('db.json');
+        const data = await response.json();
+        products = data.products;
+        renderProducts(products);
+        updateCart();
+      } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('productGrid').innerHTML = '<p>Error loading products. Please try again later.</p>';
+      }
+    }
+
+    function renderProducts(productList) {
+      const productGrid = document.getElementById('productGrid');
+      productGrid.innerHTML = '';
+      productList.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="card-image">
+            <img src="${product.image}" alt="${product.name}" class="product-img">
+            <div class="wishlist" data-id="${product.id}">${isWishlisted(product.id) ? '❤️' : '🤍'}</div>
+          </div>
+          <div class="card-content">
+            <h3>${product.name}</h3>
+            <p class="price">$${product.price.toFixed(2)} <span class="original-price">$${product.originalPrice.toFixed(2)}</span></p>
+            <button class="add-to-cart" data-id="${product.id}">Add to Cart</button>
+          </div>
+        `;
+        productGrid.appendChild(card);
+      });
+    }
+
+    function isWishlisted(productId) {
+      const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+      return wishlist.includes(productId);
+    }
+
+    function toggleWishlist(productId) {
+      let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+      if (wishlist.includes(productId)) {
+        wishlist = wishlist.filter(id => id !== productId);
+      } else {
+        wishlist.push(productId);
+      }
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      renderProducts(filterProducts());
+    }
+
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      const cartItem = cart.find(item => item.id === productId);
+      if (cartItem) {
+        cartItem.quantity += 1;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartItems = document.getElementById('cartItems');
+      const cartCount = document.getElementById('cartCount');
+      const cartTotal = document.getElementById('cartTotal');
+      cartItems.innerHTML = '';
+      let total = 0;
+      cart.forEach(item => {
+        total += item.price * item.quantity;
+        const itemElement = document.createElement('div');
+        itemElement.innerHTML = `
+          <p>${item.name} - $${item.price.toFixed(2)} x ${item.quantity}</p>
+        `;
+        cartItems.appendChild(itemElement);
+      });
+      cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartTotal.textContent = total.toFixed(2);
+    }
+
+    function filterProducts() {
+      const searchTerm = document.getElementById('productSearch').value.toLowerCase();
+      const category = document.getElementById('categoryFilter').value;
+      const priceRange = document.getElementById('priceFilter').value;
+
+      return products.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchTerm);
+        const matchesCategory = category === 'all' || product.category === category;
+        let matchesPrice = true;
+        if (priceRange === '0-50') matchesPrice = product.price <= 50;
+        else if (priceRange === '50-100') matchesPrice = product.price > 50 && product.price <= 100;
+        else if (priceRange === '100+') matchesPrice = product.price > 100;
+        return matchesSearch && matchesCategory && matchesPrice;
+      });
+    }
+
+    document.getElementById('searchButton').addEventListener('click', () => {
+      renderProducts(filterProducts());
+    });
+
+    document.getElementById('productSearch').addEventListener('input', () => {
+      renderProducts(filterProducts());
+    });
+
+    document.getElementById('categoryFilter').addEventListener('change', () => {
+      renderProducts(filterProducts());
+    });
+
+    document.getElementById('priceFilter').addEventListener('change', () => {
+      renderProducts(filterProducts());
+    });
+
+    document.getElementById('productGrid').addEventListener('click', (e) => {
+      if (e.target.classList.contains('add-to-cart')) {
         const productId = parseInt(e.target.dataset.id);
-        const product = products.find(p => p.id === productId);
-        if (!product) return;
-
-        const existingItem = cart.find(item => item.id === productId);
-        if (existingItem) {
-            existingItem.quantity++;
-        } else {
-            cart.push({ ...product, quantity: 1 });
-        }
-        updateCart();
-    };
-
-    const updateCart = () => {
-        localStorage.setItem('cart', JSON.stringify(cart));
-        cartCount.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
-        cartTotal.textContent = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
-        renderCartItems();
-    };
-
-    const renderCartItems = () => {
-        cartItems.innerHTML = '';
-        if (!cart.length) {
-            cartItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
-            return;
-        }
-
-        const template = document.getElementById('cartItemTemplate');
-        if (!template) return;
-
-        cart.forEach(item => {
-            const div = document.createElement('div');
-            div.className = 'cart-item';
-            div.dataset.id = item.id;
-            div.innerHTML = template.innerHTML
-                .replace(/\${id}/g, item.id)
-                .replace(/\${name}/g, item.name)
-                .replace(/\${price}/g, item.price.toFixed(2))
-                .replace(/\${quantity}/g, item.quantity)
-                .replace(/\${image}/g, item.image || PLACEHOLDER_IMG)
-                .replace(/\${total}/g, (item.price * item.quantity).toFixed(2));
-            cartItems.appendChild(div);
-        });
-
-        document.querySelectorAll('.remove-item').forEach(btn => {
-            btn.addEventListener('click', removeFromCart);
-        });
-    };
-
-    const removeFromCart = (e) => {
-        cart = cart.filter(item => item.id !== parseInt(e.target.closest('.cart-item').dataset.id));
-        updateCart();
-    };
-
-    // Product Functions
-    const loadFallbackProducts = () => {
-        products = [{
-            id: 1,
-            name: "Sample Product",
-            price: 99.99,
-            image: PLACEHOLDER_IMG,
-            description: "Example description"
-        }];
-        renderProducts();
-    };
-
-    const renderProducts = () => {
-        productGrid.innerHTML = '';
-        
-        if (!products.length) {
-            productGrid.innerHTML = `<div class="empty">No products available</div>`;
-            return;
-        }
-
-        const template = document.getElementById('productTemplate');
-        if (!template) return;
-
-        products.forEach(product => {
-            const div = document.createElement('div');
-            div.className = 'product-item';
-            
-            // Ensure the image path is correctly constructed
-            const fullImagePath = product.image ? `${IMAGE_BASE_PATH}${product.image}` : PLACEHOLDER_IMG;
-
-            div.innerHTML = template.innerHTML
-                .replace(/\${id}/g, product.id)
-                .replace(/\${name}/g, product.name)
-                .replace(/\${price}/g, product.price?.toFixed(2) || '0.00')
-                .replace(/\${image}/g, fullImagePath)
-                .replace(/\${description}/g, product.description || '')
-                .replace(/\${originalPrice}/g, product.originalPrice?.toFixed(2) || '0.00');
-
-            const img = div.querySelector('img');
-            if (img) {
-                img.onerror = () => {
-                    img.src = PLACEHOLDER_IMG;
-                    img.alt = "Image not available";
-                };
-            }
-            
-            div.querySelector('.add-to-cart')?.addEventListener('click', addToCart);
-            productGrid.appendChild(div);
-        });
-    };
-
-    // Main Fetch Function
-    const fetchProducts = async () => {
-        try {
-            const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                headers: {
-                    "X-Master-Key": API_KEY,
-                    "Content-Type": "application/json"
-                }
-            });
-
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            
-            const data = await response.json();
-            products = data.record?.products || [];
-            
-            // Process image paths
-            products = products.map(product => ({
-                ...product,
-                image: product.image ? `${IMAGE_BASE_PATH}${product.image}` : PLACEHOLDER_IMG
-            }));
-
-            renderProducts();
-        } catch (error) {
-            console.error("Fetch error:", error);
-            loadFallbackProducts();
-        }
-    };
-
-    // Event Listeners
-    productSearch.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        renderProducts(products.filter(p => 
-            p.name.toLowerCase().includes(term) || 
-            (p.description && p.description.toLowerCase().includes(term))
-        ));
+        addToCart(productId);
+      }
+      if (e.target.classList.contains('wishlist')) {
+        const productId = parseInt(e.target.dataset.id);
+        toggleWishlist(productId);
+      }
     });
 
-    cartToggle.addEventListener('click', () => {
-        document.body.classList.toggle('cart-open');
+    document.getElementById('cartToggle').addEventListener('click', () => {
+      document.body.classList.toggle('cart-open');
     });
 
-    document.addEventListener('click', (e) => {
-        if (!cartSidebar.contains(e.target) && e.target !== cartToggle) {
-            document.body.classList.remove('cart-open');
-        }
+    document.querySelector('.mobile-filter-toggle').addEventListener('click', () => {
+      document.querySelector('.filters').classList.toggle('active');
     });
 
-    // Initialize
-    fetchProducts();
-});
+    // Load products on page load
+    loadProducts();
