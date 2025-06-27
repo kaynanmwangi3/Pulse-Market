@@ -33,7 +33,7 @@ Ensure JavaScript is enabled for interactive features like cart and wishlist.
 For development, use a live server (e.g., VS Code’s Live Server extension or npx http-server) for real-time previews:npx http-server
 
 Access at http://localhost:8080.
-GitHub Pages link: Replace with your deployed URL (e.g., https://kaynanmwangi.github.io/pulse-market/ after setup).
+GitHub Pages link: https://kaynanmwangi3.github.io/Pulse-Market/
 
 ## Known Bugs
 {The application works as intended with no known bugs at this time.}
