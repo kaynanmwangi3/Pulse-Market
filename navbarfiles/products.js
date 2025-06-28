@@ -1,28 +1,35 @@
+// sets my external api as a variable
 const BASE_URL = 'https://my-json-server.typicode.com/kaynanmwangi3/pulsemarketjsonserver';
+
+// initializes cart array for products
     let cart = [];
 
     async function fetchProducts() {
+      // selects html elemets
       const productsContainer = document.getElementById('products');
       const errorContainer = document.getElementById('error');
       const categoryFilter = document.getElementById('category-filter');
       const priceFilter = document.getElementById('price-filter');
 
       try {
+        // fetches the endpoint of the external api (products)
         const response = await fetch(`${BASE_URL}/products`);
+        // double checks the response(if not equal to okay it throws the error)
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        // converts to http response to json
         const products = await response.json();
 
         // Populate category filter
         const categories = [...new Set(products.map(p => p.category || 'Uncategorized'))];
         categoryFilter.innerHTML = '<option value="">All Categories</option>' + categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-
+        // response message incase products fail to load
         productsContainer.innerHTML = '';
         if (products.length === 0) {
           errorContainer.style.display = 'block';
           errorContainer.textContent = 'No products found.';
           return;
         }
-
+        //  styles the card that acts as a placeholder for products
         function displayProducts(filteredProducts) {
           productsContainer.innerHTML = '';
           filteredProducts.forEach(product => {
